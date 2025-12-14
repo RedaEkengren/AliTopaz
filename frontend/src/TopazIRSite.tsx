@@ -322,7 +322,7 @@ export default function TopazIRSite() {
 
             <div className="flex items-center gap-2">
               <div className="button-enhanced">
-                <SecondaryButton href="#downloads">Downloads</SecondaryButton>
+                <PrimaryButton href="#downloads">Downloads</PrimaryButton>
               </div>
               <div className="button-enhanced">
                 <PrimaryButton href="#contact">Contact IR</PrimaryButton>
@@ -363,17 +363,17 @@ export default function TopazIRSite() {
                   </div>
                   
                   <div className="p-5">
-                    <p className="text-xs font-bold text-[var(--topaz-accent)]">Heritage</p>
-                    <p className="mt-2 text-lg font-bold text-slate-900">Built on delivery since {COMPANY.founded}</p>
-                    <p className="mt-2 text-sm text-slate-700 font-medium">
-                      Founded in {COMPANY.founded}, with <span className="font-bold text-[var(--topaz-accent)]">{COMPANY.completedProjects}</span> projects completed to date.
+                    <p className="text-xs font-semibold text-[var(--topaz-accent)]">Heritage</p>
+                    <p className="mt-4 text-lg font-bold text-[var(--gray-dark)]">Built on delivery since {COMPANY.founded}</p>
+                    <p className="mt-4 text-sm text-[var(--gray-medium)]">
+                      Founded in {COMPANY.founded}, with <span className="font-bold text-[var(--topaz-gold)]">{COMPANY.completedProjects}</span> projects completed to date.
                     </p>
-                    <div className="mt-4 flex flex-wrap gap-2">
+                    <div className="mt-6 flex flex-wrap gap-2">
                       <Pill>Founded: {COMPANY.founded}</Pill>
                       <Pill>Completed: {COMPANY.completedProjects}</Pill>
                     </div>
-                    <div className="mt-5 button-enhanced">
-                      <PrimaryButton href="#heritage">Explore our track record</PrimaryButton>
+                    <div className="mt-6 button-enhanced">
+                      <SecondaryButton href="#heritage">Explore our track record</SecondaryButton>
                     </div>
                   </div>
                 </div>
@@ -393,12 +393,12 @@ export default function TopazIRSite() {
                   </div>
                   
                   <div className="p-5">
-                    <p className="text-xs font-medium text-slate-500">Property</p>
-                  <p className="mt-2 text-lg font-medium text-slate-700">Thinking of buying property?</p>
-                  <p className="mt-2 text-sm text-slate-500">
+                    <p className="text-xs font-semibold text-[var(--gray-light)]">Property</p>
+                  <p className="mt-4 text-lg text-[var(--gray-medium)]">Thinking of buying property?</p>
+                  <p className="mt-4 text-sm text-[var(--gray-light)]">
                     Browse available assets, learn about locations, and understand the buying process with clear, practical guidance.
                   </p>
-                  <div className="mt-4 space-y-2">
+                  <div className="mt-6 space-y-2">
                     <a href="#" className="block rounded-xl border border-slate-200 bg-white p-4 hover:bg-slate-50">
                       <p className="text-sm font-semibold text-slate-900">View available properties</p>
                       <p className="mt-1 text-xs text-slate-600">Listings, brochures, and pricing guidance</p>
@@ -409,7 +409,7 @@ export default function TopazIRSite() {
                     </a>
                   </div>
                   <div className="mt-5">
-                    <PrimaryButton href="#">Start here</PrimaryButton>
+                    <SecondaryButton href="#">Start here</SecondaryButton>
                   </div>
                 </div>
                 </div>
@@ -429,22 +429,22 @@ export default function TopazIRSite() {
                   </div>
                   
                   <div className="p-5">
-                    <p className="text-xs font-bold text-[var(--topaz-accent)]">Future</p>
-                  <p className="mt-2 text-lg font-bold text-slate-900">IPO readiness & capital strategy</p>
-                  <p className="mt-2 text-sm text-slate-600">
+                    <p className="text-xs font-semibold text-[var(--topaz-accent)]">Future</p>
+                  <p className="mt-4 text-lg font-bold text-[var(--gray-dark)]">IPO readiness & capital strategy</p>
+                  <p className="mt-4 text-sm text-[var(--gray-medium)]">
                     Our future roadmap is built on disciplined growth, increasing recurring revenue, and IPO-grade governance.
                   </p>
-                  <div className="mt-4 space-y-2">
+                  <div className="mt-6 space-y-2">
                     <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                      <p className="text-xs font-semibold text-slate-700">Focus areas</p>
-                      <ul className="mt-2 space-y-1 text-sm text-slate-700">
+                      <p className="text-xs font-semibold text-[var(--gray-medium)]">Focus areas</p>
+                      <ul className="mt-4 space-y-1 text-sm text-[var(--gray-medium)]">
                         <li>• Scalable reporting and controls</li>
                         <li>• Portfolio and pipeline aligned with Vision 2030</li>
                         <li>• Disciplined capital allocation</li>
                       </ul>
                     </div>
                   </div>
-                  <div className="mt-5">
+                  <div className="mt-6">
                     <SecondaryButton href="#future">Read the investment case</SecondaryButton>
                   </div>
                 </div>
@@ -464,11 +464,11 @@ export default function TopazIRSite() {
               ].map((k, index) => (
                 <div 
                   key={k.label} 
-                  className={`rounded-2xl ${k.featured ? 'border-2 border-[var(--topaz-accent)] border-opacity-20 bg-[var(--topaz-accent)]/5' : 'border border-slate-200 bg-white'} p-4 shadow-sm card-hover animate-stagger-reveal`}
+                  className={`rounded-2xl ${k.featured ? 'border-2 border-[var(--topaz-gold)] border-opacity-30 bg-[var(--topaz-gold)]/10' : 'border border-slate-200 bg-white'} p-4 shadow-sm card-hover animate-stagger-reveal`}
                   style={{ animationDelay: `${index * 70}ms` }}
                 >
-                  <p className={`text-xs font-medium ${k.featured ? 'text-[var(--topaz-accent)]' : 'text-slate-600'}`}>{k.label}</p>
-                  <p className={`mt-2 text-base ${k.featured ? 'font-bold text-[var(--topaz-accent)]' : 'font-semibold text-slate-900'}`}>{k.value}</p>
+                  <p className={`text-xs font-semibold ${k.featured ? 'text-[var(--topaz-gold-dark)]' : 'text-[var(--gray-medium)]'}`}>{k.label}</p>
+                  <p className={`mt-4 text-base ${k.featured ? 'font-bold text-[var(--topaz-gold-dark)]' : 'font-semibold text-[var(--gray-dark)]'}`}>{k.value}</p>
                 </div>
               ))}
             </div>
@@ -875,7 +875,7 @@ export default function TopazIRSite() {
         <Container>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <SectionTitle title="Vacant jobs" subtitle="Short list of open roles. Link to the main jobs page for the full list." />
-            <PrimaryButton href="#">View all jobs</PrimaryButton>
+            <SecondaryButton href="#">View all jobs</SecondaryButton>
           </div>
 
           <div className="mt-8 grid gap-4 lg:grid-cols-3">

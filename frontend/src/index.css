@@ -2,12 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Topaz Brand Colors */
+/* Topaz Design System */
 :root {
+  /* Brand Colors */
   --topaz-accent: #0f4c75;
   --topaz-accent-light: #1a5e8c;
   --topaz-accent-hover: #0a3d5e;
   --topaz-gradient: linear-gradient(135deg, #0f4c75 0%, #1a5e8c 100%);
+  
+  /* New: Warm Accent */
+  --topaz-gold: #b8860b;
+  --topaz-gold-light: #daa520;
+  --topaz-gold-dark: #996f00;
+  
+  /* Typography System (3 weights only) */
+  --font-regular: 400;
+  --font-semibold: 600;  
+  --font-bold: 700;
+  
+  /* Spacing System (3 sizes only) */
+  --space-sm: 0.5rem;    /* 8px */
+  --space-md: 1rem;      /* 16px */
+  --space-lg: 1.5rem;    /* 24px */
+  
+  /* Gray Scale (3 tones only) */
+  --gray-light: #64748b;  /* slate-500 */
+  --gray-medium: #475569; /* slate-600 */  
+  --gray-dark: #1e293b;   /* slate-800 */
 }
 
 /* Custom animations for pitch enhancement */
