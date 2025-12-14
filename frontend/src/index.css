@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Topaz Brand Colors */
+:root {
+  --topaz-accent: #0f4c75;
+  --topaz-accent-light: #1a5e8c;
+  --topaz-accent-hover: #0a3d5e;
+  --topaz-gradient: linear-gradient(135deg, #0f4c75 0%, #1a5e8c 100%);
+}
+
+/* Custom animations for pitch enhancement */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes staggerReveal {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes underlineDraw {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+/* Animation classes */
+.animate-fade-in-up {
+  animation: fadeInUp 400ms ease-out forwards;
+}
+
+.animate-stagger-reveal {
+  animation: staggerReveal 300ms ease-out forwards;
+}
+
+/* Utility classes for better transitions */
+.transition-all-smooth {
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced hover effects */
+.card-hover {
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(15, 76, 117, 0.1);
+}
+
+/* Button enhancements */
+.button-enhanced {
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.button-enhanced:hover {
+  transform: scale(1.02);
+}
+
+/* Section title underlines */
+.section-title {
+  position: relative;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  height: 2px;
+  background: var(--topaz-gradient);
+  width: 0;
+  transition: width 200ms ease-out;
+}
+
+.section-title.in-view::after {
+  width: 60px;
+}
