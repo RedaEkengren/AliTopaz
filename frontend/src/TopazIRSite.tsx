@@ -300,7 +300,7 @@ export default function TopazIRSite() {
       <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/90 backdrop-blur">
         <Container>
           <div className="flex items-center justify-between py-4">
-            <div className="flex items-center gap-3">
+            <a href="#" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
               <img 
                 src="/images/logo.webp" 
                 alt="Topaz Logo"
@@ -310,7 +310,7 @@ export default function TopazIRSite() {
                 <p className="text-sm font-semibold">{COMPANY.name}</p>
                 <p className="text-xs text-slate-600">Investor Relations</p>
               </div>
-            </div>
+            </a>
 
             <nav className="hidden items-center gap-5 text-sm text-slate-700 md:flex">
               <a className="transition-all-smooth hover:text-slate-900 hover:border-b-2 hover:border-[var(--topaz-accent)] pb-1" href="#heritage">Heritage</a>
@@ -350,41 +350,52 @@ export default function TopazIRSite() {
             {/* Three columns */}
             <div className="grid gap-4 lg:grid-cols-3">
               {/* Column 1: Heritage */}
-              <Card className="overflow-hidden card-hover">
-                <div className="grid gap-0 sm:grid-cols-[1.15fr_1fr]">
+              <Card className="card-hover">
+                <div>
+                  {/* Heritage hero image */}
+                  <div className="relative h-32 bg-slate-100 overflow-hidden rounded-t-xl">
+                    <img 
+                      src="/images/topaz-mining-enhanced.webp"
+                      alt="Topaz mining operation showing precision and craftsmanship"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                  </div>
+                  
                   <div className="p-5">
-                    <p className="text-xs font-semibold text-[var(--topaz-accent)]">Heritage</p>
-                    <p className="mt-2 text-lg font-semibold">Built on delivery since {COMPANY.founded}</p>
-                    <p className="mt-2 text-sm text-slate-600">
-                      Founded in {COMPANY.founded}, with <span className="font-semibold text-[var(--topaz-accent)]">{COMPANY.completedProjects}</span> projects completed to date.
+                    <p className="text-xs font-bold text-[var(--topaz-accent)]">Heritage</p>
+                    <p className="mt-2 text-lg font-bold text-slate-900">Built on delivery since {COMPANY.founded}</p>
+                    <p className="mt-2 text-sm text-slate-700 font-medium">
+                      Founded in {COMPANY.founded}, with <span className="font-bold text-[var(--topaz-accent)]">{COMPANY.completedProjects}</span> projects completed to date.
                     </p>
                     <div className="mt-4 flex flex-wrap gap-2">
                       <Pill>Founded: {COMPANY.founded}</Pill>
                       <Pill>Completed: {COMPANY.completedProjects}</Pill>
                     </div>
                     <div className="mt-5 button-enhanced">
-                      <SecondaryButton href="#heritage">Explore heritage</SecondaryButton>
+                      <PrimaryButton href="#heritage">Explore our track record</PrimaryButton>
                     </div>
-                  </div>
-
-                  {/* ENHANCED Topaz mining image - high quality */}
-                  <div className="relative min-h-[220px] bg-slate-100 overflow-hidden rounded-xl">
-                    <img 
-                      src="/images/topaz-mining-enhanced.webp"
-                      alt="Topaz mining operation showing precision and craftsmanship"
-                      className="w-full h-full object-cover rounded-xl"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-xl" />
                   </div>
                 </div>
               </Card>
 
               {/* Column 2: Buying property link */}
               <Card className="card-hover">
-                <div className="p-5">
-                  <p className="text-xs font-semibold text-[var(--topaz-accent)]">Property</p>
-                  <p className="mt-2 text-lg font-semibold">Thinking of buying property?</p>
-                  <p className="mt-2 text-sm text-slate-600">
+                <div>
+                  {/* Property hero image */}
+                  <div className="relative h-32 bg-slate-100 overflow-hidden rounded-t-xl">
+                    <img 
+                      src="/images/hero-property.webp"
+                      alt="Modern Saudi Arabian residential properties and luxury developments"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                  </div>
+                  
+                  <div className="p-5">
+                    <p className="text-xs font-medium text-slate-500">Property</p>
+                  <p className="mt-2 text-lg font-medium text-slate-700">Thinking of buying property?</p>
+                  <p className="mt-2 text-sm text-slate-500">
                     Browse available assets, learn about locations, and understand the buying process with clear, practical guidance.
                   </p>
                   <div className="mt-4 space-y-2">
@@ -401,13 +412,25 @@ export default function TopazIRSite() {
                     <PrimaryButton href="#">Start here</PrimaryButton>
                   </div>
                 </div>
+                </div>
               </Card>
 
               {/* Column 3: Future/Vision link */}
               <Card className="card-hover">
-                <div className="p-5">
-                  <p className="text-xs font-semibold text-[var(--topaz-accent)]">Future</p>
-                  <p className="mt-2 text-lg font-semibold">Topaz vision & capital readiness</p>
+                <div>
+                  {/* Future hero image */}
+                  <div className="relative h-32 bg-slate-100 overflow-hidden rounded-t-xl">
+                    <img 
+                      src="/images/hero-future.webp"
+                      alt="Futuristic Saudi Arabia cityscape and Vision 2030 development"
+                      className="w-full h-full object-cover object-[center_20%]"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                  </div>
+                  
+                  <div className="p-5">
+                    <p className="text-xs font-bold text-[var(--topaz-accent)]">Future</p>
+                  <p className="mt-2 text-lg font-bold text-slate-900">IPO readiness & capital strategy</p>
                   <p className="mt-2 text-sm text-slate-600">
                     Our future roadmap is built on disciplined growth, increasing recurring revenue, and IPO-grade governance.
                   </p>
@@ -425,26 +448,27 @@ export default function TopazIRSite() {
                     <SecondaryButton href="#future">Read the investment case</SecondaryButton>
                   </div>
                 </div>
+                </div>
               </Card>
             </div>
 
             {/* Quick KPI strip under hero - Enhanced with stagger animation */}
             <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
               {[
-                { label: "Founded", value: "2008" },
-                { label: "Employees", value: "420+" },
-                { label: "AUM", value: "SAR 18.5 bn" },
-                { label: "Valuation (Internal)", value: "SAR 7.2 bn" },
-                { label: "Completed", value: "32" },
-                { label: "Under Development", value: "11" },
+                { label: "Founded", value: "2008", featured: false },
+                { label: "Employees", value: "420+", featured: false },
+                { label: "AUM", value: "SAR 18.5 bn", featured: true },
+                { label: "Valuation (Internal)", value: "SAR 7.2 bn", featured: true },
+                { label: "Completed", value: "32", featured: false },
+                { label: "Under Development", value: "11", featured: false },
               ].map((k, index) => (
                 <div 
                   key={k.label} 
-                  className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm card-hover animate-stagger-reveal"
+                  className={`rounded-2xl ${k.featured ? 'border-2 border-[var(--topaz-accent)] border-opacity-20 bg-[var(--topaz-accent)]/5' : 'border border-slate-200 bg-white'} p-4 shadow-sm card-hover animate-stagger-reveal`}
                   style={{ animationDelay: `${index * 70}ms` }}
                 >
-                  <p className="text-xs font-medium text-slate-600">{k.label}</p>
-                  <p className="mt-2 text-base font-semibold text-slate-900">{k.value}</p>
+                  <p className={`text-xs font-medium ${k.featured ? 'text-[var(--topaz-accent)]' : 'text-slate-600'}`}>{k.label}</p>
+                  <p className={`mt-2 text-base ${k.featured ? 'font-bold text-[var(--topaz-accent)]' : 'font-semibold text-slate-900'}`}>{k.value}</p>
                 </div>
               ))}
             </div>
@@ -489,7 +513,7 @@ export default function TopazIRSite() {
 
             <Card>
               <div className="border-b border-slate-200 p-5">
-                <p className="text-sm font-semibold">1.4 Suggested Images</p>
+                <p className="text-sm font-semibold">1.4 Regional Coverage</p>
               </div>
               <div className="p-5">
                 <div className="mb-4">
@@ -506,10 +530,10 @@ export default function TopazIRSite() {
                   </div>
                 </div>
                 <ul className="space-y-2 text-sm text-slate-700">
-                  <li>• High-resolution aerials of completed projects</li>
-                  <li>• Before/after development visuals</li>
-                  <li>• City skyline shots (Riyadh, Jeddah, Eastern Province)</li>
-                  <li>• Construction progress imagery to signal execution capability</li>
+                  <li>• Strategic presence across Saudi Arabia's major economic centers</li>
+                  <li>• Development portfolio spanning Riyadh, Jeddah, and Eastern Province</li>
+                  <li>• Urban growth aligned with Vision 2030 initiatives</li>
+                  <li>• Demonstrated execution capability across diverse markets</li>
                 </ul>
               </div>
             </Card>
@@ -635,11 +659,11 @@ export default function TopazIRSite() {
           
           {/* Saudi Skyline Hero - Full width visual break */}
           <div className="mt-8 -mx-4 sm:-mx-6 lg:-mx-8">
-            <div className="relative h-64 bg-slate-100 overflow-hidden">
+            <div className="relative h-64 bg-slate-100 overflow-hidden rounded-xl">
               <img 
                 src="/images/saudi-regional-map.webp"
                 alt="Saudi Arabia regional development map showing project locations"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover rounded-xl"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6">
