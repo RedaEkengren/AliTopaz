@@ -590,7 +590,8 @@ export default function TopazIRSite() {
               <div className="border-b border-slate-200 bg-slate-50 p-5">
                 <p className="text-sm font-semibold">1.2 Development Footprint</p>
               </div>
-              <div className="overflow-x-auto">
+              {/* Desktop table view */}
+              <div className="hidden sm:block overflow-x-auto">
                 <table className="min-w-full border-separate border-spacing-0">
                   <thead>
                     <tr>
@@ -616,13 +617,29 @@ export default function TopazIRSite() {
                   </tbody>
                 </table>
               </div>
+              {/* Mobile card view */}
+              <div className="sm:hidden p-5 space-y-3">
+                {[
+                  [t.residentialUnits, "9,800+"],
+                  [t.commercialUnits, "1,450+"],
+                  [t.hospitalityKeys, "620"],
+                  [t.builtUpArea, "4.2 million sqm"],
+                  [t.managedArea, "2.9 million sqm"],
+                ].map(([m, v]) => (
+                  <div key={m} className="flex justify-between items-center py-3 border-b border-slate-200 last:border-b-0">
+                    <span className="text-sm text-slate-800">{m}</span>
+                    <span className="text-sm font-semibold text-[var(--topaz-gold)]">{v}</span>
+                  </div>
+                ))}
+              </div>
             </Card>
 
             <Card>
               <div className="border-b border-slate-200 bg-slate-50 p-5">
                 <p className="text-sm font-semibold">{t.financeTitle}</p>
               </div>
-              <div className="overflow-x-auto">
+              {/* Desktop table view */}
+              <div className="hidden sm:block overflow-x-auto">
                 <table className="min-w-full border-separate border-spacing-0">
                   <thead>
                     <tr>
@@ -648,6 +665,33 @@ export default function TopazIRSite() {
                     ))}
                   </tbody>
                 </table>
+              </div>
+              {/* Mobile card view */}
+              <div className="sm:hidden p-5 space-y-4">
+                {[
+                  [t.revenue, "1.1 bn", "1.45 bn", "1.9 bn"],
+                  [t.ebitdaMargin, "31%", "34%", "36%"],
+                  [t.netMargin, "18%", "21%", "23%"],
+                  [t.avgIRR, "–", "–", "17–19%"],
+                ].map(([label, fy21, fy22, fy23], idx) => (
+                  <div key={idx} className="rounded-xl border border-slate-200 bg-white p-4">
+                    <div className="text-sm font-semibold text-slate-900 mb-3">{label}</div>
+                    <div className="grid grid-cols-3 gap-2 text-sm">
+                      <div className="text-center">
+                        <div className="text-xs text-slate-600">FY2021</div>
+                        <div className="font-medium text-slate-800">{fy21}</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xs text-slate-600">FY2022</div>
+                        <div className="font-medium text-slate-800">{fy22}</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xs text-slate-600">FY2023</div>
+                        <div className="font-semibold text-[var(--topaz-accent)]">{fy23}</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
               <div className="p-5 text-xs text-slate-500">{t.figuresNote}</div>
             </Card>
