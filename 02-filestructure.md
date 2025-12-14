@@ -84,7 +84,12 @@ scripts/
 - `/etc/nginx/sites-available/redabenbo.se` - Web server configuration
 
 ### Assets
-- `frontend/public/images/*.webp` - Optimized images from client URLs
+- `frontend/public/images/*.webp` - All final high-quality images optimized
+  - `hero-property.webp` - Saudi luxury properties for Property column
+  - `hero-future.webp` - Vision 2030 cityscape for Future column  
+  - `topaz-mining-enhanced.webp` - Heritage mining operation
+  - `saudi-skyline-hero.webp` - Urban development for Suggested Images
+  - `saudi-regional-map.webp` - Regional coverage map
 - `/etc/letsencrypt/live/www.redabenbo.se/` - SSL certificates
 
 ## Build Process

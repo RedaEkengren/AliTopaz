@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { Language, useTranslations, getDir, isRTL } from "./i18n";
 
 type PressRelease = {
   id: string;
@@ -30,85 +31,24 @@ const COMPANY = {
   completedProjects: 57,
 };
 
-const pressReleases: PressRelease[] = [
-  {
-    id: "pr-001",
-    date: "2025-11-28",
-    title: "Topaz reports continued margin expansion and strong recurring revenue growth",
-    summary:
-      "Operational discipline and portfolio quality supported stable cash generation across residential and commercial assets.",
-    href: "#",
-  },
-  {
-    id: "pr-002",
-    date: "2025-10-12",
-    title: "Topaz announces new mixed-use development aligned with Vision 2030 priorities",
-    summary:
-      "The pipeline remains balanced across pre-sold and income-generating projects, supporting disciplined growth.",
-    href: "#",
-  },
-  {
-    id: "pr-003",
-    date: "2025-09-05",
-    title: "Topaz strengthens governance and reporting controls for capital markets readiness",
-    summary:
-      "Enhanced IFRS reporting processes and committee structures to meet institutional expectations.",
-    href: "#",
-  },
-];
+// Moved to component to use translations
 
-const jobs: Job[] = [
-  {
-    id: "job-001",
-    title: "Senior Project Manager (Real Estate Development)",
-    location: "Riyadh",
-    type: "Full-time",
-    href: "#",
-  },
-  {
-    id: "job-002",
-    title: "Financial Reporting Analyst (IFRS)",
-    location: "Jeddah",
-    type: "Full-time",
-    href: "#",
-  },
-  {
-    id: "job-003",
-    title: "Leasing & Asset Management Associate",
-    location: "Eastern Province",
-    type: "Full-time",
-    href: "#",
-  },
-];
+// Moved to component to use translations
 
-const events: EventItem[] = [
-  {
-    id: "ev-001",
-    date: "2025-12-18",
-    title: "Investor Briefing: Portfolio Performance & FY Outlook",
-    location: "Riyadh (Hybrid)",
-    href: "#",
-  },
-  {
-    id: "ev-002",
-    date: "2026-01-22",
-    title: "Careers Open Day",
-    location: "Jeddah",
-    href: "#",
-  },
-  {
-    id: "ev-003",
-    date: "2026-02-10",
-    title: "Sustainability & ESG Update",
-    location: "Online",
-    href: "#",
-  },
-];
+// Moved to component to use translations
 
-function formatISODate(iso: string) {
+function formatISODate(iso: string, language: Language = 'en') {
   const [y, m, d] = iso.split("-").map((x) => parseInt(x, 10));
   const dt = new Date(Date.UTC(y, m - 1, d));
-  return dt.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "2-digit" });
+  
+  if (language === 'ar') {
+    // Arabic date formatting
+    const months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 
+                    'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+    return `${d} ${months[m - 1]} ${y}`;
+  }
+  
+  return dt.toLocaleDateString('en', { year: "numeric", month: "short", day: "2-digit" });
 }
 
 function cn(...classes: Array<string | false | null | undefined>) {
@@ -174,7 +114,7 @@ function SecondaryButton({ children, href }: { children: React.ReactNode; href: 
 }
 
 /** ---------- Simple Calendar Widget (client-side) ---------- */
-function CalendarWidget({ items }: { items: EventItem[] }) {
+function CalendarWidget({ items, t }: { items: EventItem[]; t: any }) {
   const today = new Date();
   const [cursor, setCursor] = useState(() => new Date(today.getFullYear(), today.getMonth(), 1));
 
@@ -217,17 +157,17 @@ function CalendarWidget({ items }: { items: EventItem[] }) {
             type="button"
             onClick={() => setCursor((d) => new Date(d.getFullYear(), d.getMonth() - 1, 1))}
             className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs font-semibold text-slate-800 hover:bg-slate-50"
-            aria-label="Previous month"
+            aria-label={t.prev}
           >
-            Prev
+            {t.prev}
           </button>
           <button
             type="button"
             onClick={() => setCursor((d) => new Date(d.getFullYear(), d.getMonth() + 1, 1))}
             className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs font-semibold text-slate-800 hover:bg-slate-50"
-            aria-label="Next month"
+            aria-label={t.next}
           >
-            Next
+            {t.next}
           </button>
         </div>
       </div>
@@ -254,7 +194,7 @@ function CalendarWidget({ items }: { items: EventItem[] }) {
                   isToday ? "border-slate-900" : "border-slate-200",
                   "bg-white"
                 )}
-                title={cell.hasEvent ? "Event scheduled" : ""}
+                title={cell.hasEvent ? t.eventScheduled : ""}
               >
                 <span className={cn("text-slate-800", isToday && "font-semibold")}>{cell.date.getDate()}</span>
                 {cell.hasEvent ? <span className="absolute bottom-1 h-1 w-1 rounded-full bg-slate-900" /> : null}
@@ -264,10 +204,10 @@ function CalendarWidget({ items }: { items: EventItem[] }) {
         </div>
 
         <div className="mt-5">
-          <p className="text-xs font-semibold text-slate-700">Upcoming in {monthLabel}</p>
+          <p className="text-xs font-semibold text-slate-700">{t.upcomingIn} {monthLabel}</p>
           <div className="mt-3 space-y-3">
             {selectedMonthEvents.length === 0 ? (
-              <p className="text-sm text-slate-600">No events scheduled for this month.</p>
+              <p className="text-sm text-slate-600">{t.noEvents}</p>
             ) : (
               selectedMonthEvents.map((e) => (
                 <a
@@ -294,8 +234,90 @@ function CalendarWidget({ items }: { items: EventItem[] }) {
 
 /** ---------- Main Page ---------- */
 export default function TopazIRSite() {
+  const [language, setLanguage] = useState<Language>('ar');
+  const t = useTranslations(language);
+  const isArabic = isRTL(language);
+  const fontClass = isArabic ? 'font-arabic' : 'font-latin';
+
+  // Data arrays using translations
+  const pressReleases: PressRelease[] = [
+    {
+      id: "pr-001",
+      date: "2025-11-28",
+      title: t.pr1Title,
+      summary: t.pr1Summary,
+      href: "#",
+    },
+    {
+      id: "pr-002",
+      date: "2025-10-12",
+      title: t.pr2Title,
+      summary: t.pr2Summary,
+      href: "#",
+    },
+    {
+      id: "pr-003",
+      date: "2025-09-05",
+      title: t.pr3Title,
+      summary: t.pr3Summary,
+      href: "#",
+    },
+  ];
+
+  const jobs: Job[] = [
+    {
+      id: "job-001",
+      title: t.job1,
+      location: t.location1,
+      type: t.fullTime,
+      href: "#",
+    },
+    {
+      id: "job-002",
+      title: t.job2,
+      location: t.location2,
+      type: t.fullTime,
+      href: "#",
+    },
+    {
+      id: "job-003",
+      title: t.job3,
+      location: t.location3,
+      type: t.fullTime,
+      href: "#",
+    },
+  ];
+
+  const events: EventItem[] = [
+    {
+      id: "ev-001",
+      date: "2025-12-18",
+      title: t.event1,
+      location: t.event1Location,
+      href: "#",
+    },
+    {
+      id: "ev-002",
+      date: "2026-01-22",
+      title: t.event2,
+      location: t.event2Location,
+      href: "#",
+    },
+    {
+      id: "ev-003",
+      date: "2026-02-10",
+      title: t.event3,
+      location: t.event2Location,
+      href: "#",
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-white text-slate-900">
+    <div 
+      className={`min-h-screen bg-white text-slate-900 ${fontClass}`}
+      dir={getDir(language)}
+      lang={language}
+    >
       {/* Top bar */}
       <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/90 backdrop-blur">
         <Container>
@@ -303,29 +325,56 @@ export default function TopazIRSite() {
             <a href="#" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
               <img 
                 src="/images/logo.webp" 
-                alt="Topaz Logo"
+                alt={t.logoAlt}
                 className="h-9 w-9 rounded-xl object-cover"
               />
               <div>
                 <p className="text-sm font-semibold">{COMPANY.name}</p>
-                <p className="text-xs text-slate-600">Investor Relations</p>
+                <p className="text-xs text-slate-600">{t.investorRelations}</p>
               </div>
             </a>
 
             <nav className="hidden items-center gap-5 text-sm text-slate-700 md:flex">
-              <a className="transition-all-smooth hover:text-slate-900 hover:border-b-2 hover:border-[var(--topaz-accent)] pb-1" href="#heritage">Heritage</a>
-              <a className="transition-all-smooth hover:text-slate-900 hover:border-b-2 hover:border-[var(--topaz-accent)] pb-1" href="#future">Future & Investment Case</a>
-              <a className="transition-all-smooth hover:text-slate-900 hover:border-b-2 hover:border-[var(--topaz-accent)] pb-1" href="#press">Press</a>
-              <a className="transition-all-smooth hover:text-slate-900 hover:border-b-2 hover:border-[var(--topaz-accent)] pb-1" href="#careers">Careers</a>
-              <a className="transition-all-smooth hover:text-slate-900 hover:border-b-2 hover:border-[var(--topaz-accent)] pb-1" href="#events">Events</a>
+              <a className="transition-all-smooth hover:text-slate-900 hover:border-b-2 hover:border-[var(--topaz-accent)] pb-1" href="#heritage">{t.heritage}</a>
+              <a className="transition-all-smooth hover:text-slate-900 hover:border-b-2 hover:border-[var(--topaz-accent)] pb-1" href="#future">{t.investment}</a>
+              <a className="transition-all-smooth hover:text-slate-900 hover:border-b-2 hover:border-[var(--topaz-accent)] pb-1" href="#press">{t.pressReleases}</a>
+              <a className="transition-all-smooth hover:text-slate-900 hover:border-b-2 hover:border-[var(--topaz-accent)] pb-1" href="#careers">{t.careers}</a>
+              <a className="transition-all-smooth hover:text-slate-900 hover:border-b-2 hover:border-[var(--topaz-accent)] pb-1" href="#events">{t.events}</a>
             </nav>
 
-            <div className="flex items-center gap-2">
-              <div className="button-enhanced">
-                <PrimaryButton href="#downloads">Downloads</PrimaryButton>
+            <div className="flex items-center gap-4">
+              {/* Language Toggle */}
+              <div className="flex items-center gap-2 text-sm">
+                <button
+                  onClick={() => setLanguage('en')}
+                  className={`px-2 py-1 rounded transition-all ${
+                    language === 'en' 
+                      ? 'bg-[var(--topaz-accent)] text-white' 
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  EN
+                </button>
+                <span className="text-slate-400">|</span>
+                <button
+                  onClick={() => setLanguage('ar')}
+                  className={`px-2 py-1 rounded transition-all ${
+                    language === 'ar' 
+                      ? 'bg-[var(--topaz-accent)] text-white' 
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  العربية
+                </button>
               </div>
-              <div className="button-enhanced">
-                <PrimaryButton href="#contact">Contact IR</PrimaryButton>
+
+              <div className="flex items-center gap-2">
+                <div className="button-enhanced">
+                  <PrimaryButton href="#downloads">{t.downloads}</PrimaryButton>
+                </div>
+                <div className="button-enhanced">
+                  <PrimaryButton href="#contact">{t.contactIR}</PrimaryButton>
+                </div>
               </div>
             </div>
           </div>
@@ -340,10 +389,10 @@ export default function TopazIRSite() {
         <Container>
           <div className="relative flex min-h-[calc(100vh-72px)] flex-col justify-center py-10">
             <div className="mb-7 animate-fade-in-up">
-              <p className="text-xs font-semibold tracking-wide text-slate-600">Institutional • Data-forward • Capital readiness</p>
-              <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">{COMPANY.name} Investor Relations</h1>
+              <p className="text-xs font-semibold tracking-wide text-slate-600">{t.heroTagline}</p>
+              <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">{t.heroTitle}</h1>
               <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-600">
-                Evidence-led updates on heritage, performance, and the forward roadmap—structured for institutional review.
+                {t.heroDescription}
               </p>
             </div>
 
@@ -356,24 +405,24 @@ export default function TopazIRSite() {
                   <div className="relative h-32 bg-slate-100 overflow-hidden rounded-t-xl">
                     <img 
                       src="/images/topaz-mining-enhanced.webp"
-                      alt="Topaz mining operation showing precision and craftsmanship"
+                      alt={t.miningAlt}
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                   </div>
                   
                   <div className="p-5">
-                    <p className="text-xs font-semibold text-[var(--topaz-accent)]">Heritage</p>
-                    <p className="mt-4 text-lg font-bold text-[var(--gray-dark)]">Built on delivery since {COMPANY.founded}</p>
+                    <p className="text-xs font-semibold text-[var(--topaz-accent)]">{t.heroHeritageTitle}</p>
+                    <p className="mt-4 text-lg font-bold text-[var(--gray-dark)]">{t.heroHeritageSubtitle}</p>
                     <p className="mt-4 text-sm text-[var(--gray-medium)]">
-                      Founded in {COMPANY.founded}, with <span className="font-bold text-[var(--topaz-gold)]">{COMPANY.completedProjects}</span> projects completed to date.
+                      {t.heroHeritageDescription}
                     </p>
                     <div className="mt-6 flex flex-wrap gap-2">
-                      <Pill>Founded: {COMPANY.founded}</Pill>
-                      <Pill>Completed: {COMPANY.completedProjects}</Pill>
+                      <Pill>{t.founded}: {COMPANY.founded}</Pill>
+                      <Pill>{t.completedProjects}: {COMPANY.completedProjects}</Pill>
                     </div>
                     <div className="mt-6 button-enhanced">
-                      <SecondaryButton href="#heritage">Explore our track record</SecondaryButton>
+                      <SecondaryButton href="#heritage">{t.learnMore}</SecondaryButton>
                     </div>
                   </div>
                 </div>
@@ -386,30 +435,30 @@ export default function TopazIRSite() {
                   <div className="relative h-32 bg-slate-100 overflow-hidden rounded-t-xl">
                     <img 
                       src="/images/hero-property.webp"
-                      alt="Modern Saudi Arabian residential properties and luxury developments"
+                      alt={t.propertyAlt}
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                   </div>
                   
                   <div className="p-5">
-                    <p className="text-xs font-semibold text-[var(--gray-light)]">Property</p>
-                  <p className="mt-4 text-lg text-[var(--gray-medium)]">Thinking of buying property?</p>
+                    <p className="text-xs font-semibold text-[var(--gray-light)]">{t.heroPropertyTitle}</p>
+                  <p className="mt-4 text-lg text-[var(--gray-medium)]">{t.heroPropertySubtitle}</p>
                   <p className="mt-4 text-sm text-[var(--gray-light)]">
-                    Browse available assets, learn about locations, and understand the buying process with clear, practical guidance.
+                    {t.heroPropertyDescription}
                   </p>
                   <div className="mt-6 space-y-2">
                     <a href="#" className="block rounded-xl border border-slate-200 bg-white p-4 hover:bg-slate-50">
-                      <p className="text-sm font-semibold text-slate-900">View available properties</p>
-                      <p className="mt-1 text-xs text-slate-600">Listings, brochures, and pricing guidance</p>
+                      <p className="text-sm font-semibold text-slate-900">{t.heroPropertyLink1}</p>
+                      <p className="mt-1 text-xs text-slate-600">{t.heroPropertyLink1Desc}</p>
                     </a>
                     <a href="#" className="block rounded-xl border border-slate-200 bg-white p-4 hover:bg-slate-50">
-                      <p className="text-sm font-semibold text-slate-900">Buying checklist</p>
-                      <p className="mt-1 text-xs text-slate-600">Steps, documents, and timelines</p>
+                      <p className="text-sm font-semibold text-slate-900">{t.heroPropertyLink2}</p>
+                      <p className="mt-1 text-xs text-slate-600">{t.heroPropertyLink2Desc}</p>
                     </a>
                   </div>
                   <div className="mt-5">
-                    <SecondaryButton href="#">Start here</SecondaryButton>
+                    <SecondaryButton href="#">{t.heroPropertyCTA}</SecondaryButton>
                   </div>
                 </div>
                 </div>
@@ -422,30 +471,30 @@ export default function TopazIRSite() {
                   <div className="relative h-32 bg-slate-100 overflow-hidden rounded-t-xl">
                     <img 
                       src="/images/hero-future.webp"
-                      alt="Futuristic Saudi Arabia cityscape and Vision 2030 development"
+                      alt={t.futureAlt}
                       className="w-full h-full object-cover object-[center_20%]"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                   </div>
                   
                   <div className="p-5">
-                    <p className="text-xs font-semibold text-[var(--topaz-accent)]">Future</p>
-                  <p className="mt-4 text-lg font-bold text-[var(--gray-dark)]">IPO readiness & capital strategy</p>
+                    <p className="text-xs font-semibold text-[var(--topaz-accent)]">{t.heroFutureTitle}</p>
+                  <p className="mt-4 text-lg font-bold text-[var(--gray-dark)]">{t.heroFutureSubtitle}</p>
                   <p className="mt-4 text-sm text-[var(--gray-medium)]">
-                    Our future roadmap is built on disciplined growth, increasing recurring revenue, and IPO-grade governance.
+                    {t.heroFutureDescription}
                   </p>
                   <div className="mt-6 space-y-2">
                     <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                      <p className="text-xs font-semibold text-[var(--gray-medium)]">Focus areas</p>
+                      <p className="text-xs font-semibold text-[var(--gray-medium)]">{t.focusAreas}</p>
                       <ul className="mt-4 space-y-1 text-sm text-[var(--gray-medium)]">
-                        <li>• Scalable reporting and controls</li>
-                        <li>• Portfolio and pipeline aligned with Vision 2030</li>
-                        <li>• Disciplined capital allocation</li>
+                        <li>{t.focusArea1}</li>
+                        <li>{t.focusArea2}</li>
+                        <li>{t.focusArea3}</li>
                       </ul>
                     </div>
                   </div>
                   <div className="mt-6">
-                    <SecondaryButton href="#future">Read the investment case</SecondaryButton>
+                    <SecondaryButton href="#future">{t.learnMore}</SecondaryButton>
                   </div>
                 </div>
                 </div>
@@ -455,12 +504,12 @@ export default function TopazIRSite() {
             {/* Quick KPI strip under hero - Enhanced with stagger animation */}
             <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
               {[
-                { label: "Founded", value: "2008", featured: false },
-                { label: "Employees", value: "420+", featured: false },
-                { label: "AUM", value: "SAR 18.5 bn", featured: true },
-                { label: "Valuation (Internal)", value: "SAR 7.2 bn", featured: true },
-                { label: "Completed", value: "32", featured: false },
-                { label: "Under Development", value: "11", featured: false },
+                { label: t.founded, value: "2008", featured: false },
+                { label: t.employees, value: "420+", featured: false },
+                { label: t.aum, value: "SAR 18.5 bn", featured: true },
+                { label: t.valuation, value: "SAR 7.2 bn", featured: true },
+                { label: t.completed, value: "32", featured: false },
+                { label: t.underDevelopment, value: "11", featured: false },
               ].map((k, index) => (
                 <div 
                   key={k.label} 
@@ -481,31 +530,28 @@ export default function TopazIRSite() {
         <Container>
           <div className="section-title in-view">
             <SectionTitle
-              eyebrow="SECTION 1"
-              title="Our Heritage & Performance"
-              subtitle="Demonstrate credibility, scale, discipline, and consistency. This section anchors investor confidence by combining narrative history with hard performance data."
+              eyebrow={t.section1Eyebrow}
+              title={t.section1Title}
+              subtitle={t.section1Subtitle}
             />
           </div>
 
           <div className="mt-8 grid gap-4 lg:grid-cols-3">
             <Card className="lg:col-span-2">
               <div className="border-b border-slate-200 p-5">
-                <p className="text-sm font-semibold">1.1 Overview Narrative</p>
+                <p className="text-sm font-semibold">{t.overviewTitle}</p>
               </div>
               <div className="p-5">
-                <h3 className="text-lg font-semibold">Building Value Across Saudi Arabia Since 2008</h3>
+                <h3 className="text-lg font-semibold">{t.overviewHeading}</h3>
                 <div className="mt-3 space-y-3 text-sm leading-relaxed text-slate-700">
                   <p>
-                    Founded in 2008, Topaz has grown from a single-project developer into a fully integrated real estate platform
-                    operating across residential, commercial, and mixed-use assets.
+                    {t.overviewPara1}
                   </p>
                   <p>
-                    Over the past decade and a half, the company has delivered landmark developments that align with Saudi Arabia's
-                    urbanization goals, while maintaining strong capital discipline and operational efficiency.
+                    {t.overviewPara2}
                   </p>
                   <p>
-                    Today, Topaz manages a diversified portfolio across multiple cities, serving thousands of residents and commercial
-                    tenants, and generating stable recurring revenue supported by high-quality assets.
+                    {t.overviewPara3}
                   </p>
                 </div>
               </div>
@@ -513,27 +559,27 @@ export default function TopazIRSite() {
 
             <Card>
               <div className="border-b border-slate-200 p-5">
-                <p className="text-sm font-semibold">1.4 Regional Coverage</p>
+                <p className="text-sm font-semibold">{t.regionalTitle}</p>
               </div>
               <div className="p-5">
                 <div className="mb-4">
                   <div className="relative w-full h-32 bg-slate-100 rounded-xl overflow-hidden">
                     <img 
                       src="/images/saudi-skyline-hero.webp"
-                      alt="Saudi Arabia skyline showcasing urban development and Vision 2030 progress"
+                      alt={t.skylineAlt}
                       className="w-full h-full object-cover rounded-xl"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-xl" />
                     <div className="absolute bottom-2 left-2">
-                      <p className="text-white text-xs font-semibold">Vision 2030</p>
+                      <p className="text-white text-xs font-semibold">{t.vision2030}</p>
                     </div>
                   </div>
                 </div>
                 <ul className="space-y-2 text-sm text-slate-700">
-                  <li>• Strategic presence across Saudi Arabia's major economic centers</li>
-                  <li>• Development portfolio spanning Riyadh, Jeddah, and Eastern Province</li>
-                  <li>• Urban growth aligned with Vision 2030 initiatives</li>
-                  <li>• Demonstrated execution capability across diverse markets</li>
+                  <li>{t.regionalPoint1}</li>
+                  <li>{t.regionalPoint2}</li>
+                  <li>{t.regionalPoint3}</li>
+                  <li>{t.regionalPoint4}</li>
                 </ul>
               </div>
             </Card>
@@ -556,11 +602,11 @@ export default function TopazIRSite() {
                   </thead>
                   <tbody>
                     {[
-                      ["Residential Units Delivered", "9,800+"],
-                      ["Commercial Units Delivered", "1,450+"],
-                      ["Hospitality Keys", "620"],
-                      ["Total Built-Up Area Developed", "4.2 million sqm"],
-                      ["Total Area Currently Managed", "2.9 million sqm"],
+                      [t.residentialUnits, "9,800+"],
+                      [t.commercialUnits, "1,450+"],
+                      [t.hospitalityKeys, "620"],
+                      [t.builtUpArea, "4.2 million sqm"],
+                      [t.managedArea, "2.9 million sqm"],
                     ].map(([m, v]) => (
                       <tr key={m} className="hover:bg-slate-50/60">
                         <td className="border-b border-slate-200 px-5 py-3 text-sm text-slate-800">{m}</td>
@@ -574,13 +620,13 @@ export default function TopazIRSite() {
 
             <Card>
               <div className="border-b border-slate-200 bg-slate-50 p-5">
-                <p className="text-sm font-semibold">1.2 Financial Performance Snapshot</p>
+                <p className="text-sm font-semibold">{t.financeTitle}</p>
               </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full border-separate border-spacing-0">
                   <thead>
                     <tr>
-                      <th className="border-b border-slate-200 px-5 py-3 text-left text-xs font-semibold text-slate-600">KPI</th>
+                      <th className="border-b border-slate-200 px-5 py-3 text-left text-xs font-semibold text-slate-600">{t.kpi}</th>
                       <th className="border-b border-slate-200 px-5 py-3 text-right text-xs font-semibold text-slate-600">FY2021</th>
                       <th className="border-b border-slate-200 px-5 py-3 text-right text-xs font-semibold text-slate-600">FY2022</th>
                       <th className="border-b border-slate-200 px-5 py-3 text-right text-xs font-semibold text-slate-600">FY2023</th>
@@ -588,10 +634,10 @@ export default function TopazIRSite() {
                   </thead>
                   <tbody>
                     {[
-                      ["Revenue (SAR)", "1.1 bn", "1.45 bn", "1.9 bn"],
-                      ["EBITDA Margin", "31%", "34%", "36%"],
-                      ["Net Profit Margin", "18%", "21%", "23%"],
-                      ["Average Project IRR", "–", "–", "17–19%"],
+                      [t.revenue, "1.1 bn", "1.45 bn", "1.9 bn"],
+                      [t.ebitdaMargin, "31%", "34%", "36%"],
+                      [t.netMargin, "18%", "21%", "23%"],
+                      [t.avgIRR, "–", "–", "17–19%"],
                     ].map(([k, a, b, c]) => (
                       <tr key={k} className="hover:bg-slate-50/60">
                         <td className="border-b border-slate-200 px-5 py-3 text-sm text-slate-800">{k}</td>
@@ -603,7 +649,7 @@ export default function TopazIRSite() {
                   </tbody>
                 </table>
               </div>
-              <div className="p-5 text-xs text-slate-500">All figures illustrative.</div>
+              <div className="p-5 text-xs text-slate-500">{t.figuresNote}</div>
             </Card>
           </div>
 
@@ -615,36 +661,36 @@ export default function TopazIRSite() {
               <div className="grid gap-4 lg:grid-cols-2">
                 {[
                   {
-                    period: "2008–2012",
-                    title: "Foundation Phase",
-                    bullets: ["First residential developments", "Privately funded, founder-led capital structure"],
+                    period: t.phase1Period,
+                    title: t.phase1Title,
+                    bullets: [t.phase1Desc1, t.phase1Desc2],
                   },
                   {
-                    period: "2013–2017",
-                    title: "Expansion Phase",
-                    bullets: ["Entry into mixed-use and commercial assets", "Strategic partnerships with local contractors and financiers"],
+                    period: t.phase2Period,
+                    title: t.phase2Title,
+                    bullets: [t.phase2Desc1, t.phase2Desc2],
                   },
                   {
-                    period: "2018–2022",
-                    title: "Institutionalization",
-                    bullets: ["Governance upgrades", "Portfolio diversification", "Recurring revenue introduced"],
+                    period: t.phase3Period,
+                    title: t.phase3Title,
+                    bullets: [t.phase3Desc1, t.phase3Desc2, t.phase3Desc3],
                   },
                   {
-                    period: "2023–Today",
-                    title: "Scale & Capital Readiness",
-                    bullets: ["Strong balance sheet", "Pipeline aligned with Vision 2030", "IPO-grade reporting and controls"],
+                    period: t.phase4Period,
+                    title: t.phase4Title,
+                    bullets: [t.phase4Desc1, t.phase4Desc2, t.phase4Desc3],
                   },
-                ].map((t) => (
-                  <Card key={t.period} className="p-5">
+                ].map((timePhase) => (
+                  <Card key={timePhase.period} className="p-5">
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <p className="text-xs font-semibold text-slate-600">{t.period}</p>
-                        <p className="mt-1 text-base font-semibold">{t.title}</p>
+                        <p className="text-xs font-semibold text-slate-600">{timePhase.period}</p>
+                        <p className="mt-1 text-base font-semibold">{timePhase.title}</p>
                       </div>
-                      <Pill>Milestone</Pill>
+                      <Pill>{t.milestone}</Pill>
                     </div>
                     <ul className="mt-3 space-y-2 text-sm text-slate-700">
-                      {t.bullets.map((b) => (
+                      {timePhase.bullets.map((b) => (
                         <li key={b} className="flex gap-3">
                           <span className="mt-2 h-1.5 w-1.5 rounded-full bg-slate-400" />
                           <span>{b}</span>
@@ -662,13 +708,13 @@ export default function TopazIRSite() {
             <div className="relative h-64 bg-slate-100 overflow-hidden rounded-xl">
               <img 
                 src="/images/saudi-regional-map.webp"
-                alt="Saudi Arabia regional development map showing project locations"
+                alt={t.mapAlt}
                 className="w-full h-full object-cover rounded-xl"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6">
-                <h3 className="text-white text-lg font-bold mb-1">Regional Presence</h3>
-                <p className="text-white/90 text-sm">Strategic development across Saudi Arabia</p>
+                <h3 className="text-white text-lg font-bold mb-1">{t.regionalPresence}</h3>
+                <p className="text-white/90 text-sm">{t.strategicDevelopment}</p>
               </div>
             </div>
           </div>
@@ -680,31 +726,28 @@ export default function TopazIRSite() {
         <Container>
           <div className="section-title in-view">
             <SectionTitle
-              eyebrow="SECTION 3"
-              title="Our Future & Investment Case"
-              subtitle="Position the company as a future-listed, institutionally credible platform with strong fundamentals, favorable macro tailwinds, and a disciplined growth strategy."
+              eyebrow={t.section3Eyebrow}
+              title={t.section3Title}
+              subtitle={t.section3Subtitle}
             />
           </div>
 
           <div className="mt-8 grid gap-4 lg:grid-cols-2">
             <Card>
               <div className="border-b border-slate-200 p-5">
-                <p className="text-sm font-semibold">3.1 Forward-Looking Narrative</p>
+                <p className="text-sm font-semibold">{t.forwardTitle}</p>
               </div>
               <div className="p-5">
-                <h3 className="text-lg font-semibold">Positioned for Long-Term Growth</h3>
+                <h3 className="text-lg font-semibold">{t.forwardHeading}</h3>
                 <div className="mt-3 space-y-3 text-sm leading-relaxed text-slate-700">
                   <p>
-                    Topaz is entering its next phase of growth, driven by a strong development pipeline, expanding recurring revenue
-                    streams, and structural tailwinds in the Saudi real estate market.
+                    {t.forwardPara1}
                   </p>
                   <p>
-                    With a proven execution track record and increasing operational scale, Topaz is preparing for broader capital
-                    market participation.
+                    {t.forwardPara2}
                   </p>
                   <p>
-                    Our strategy is centered on sustainable profitability, disciplined capital allocation, and alignment with national
-                    development priorities.
+                    {t.forwardPara3}
                   </p>
                 </div>
               </div>
@@ -712,30 +755,30 @@ export default function TopazIRSite() {
 
             <Card>
               <div className="border-b border-slate-200 p-5">
-                <p className="text-sm font-semibold">3.2 Investment Highlights</p>
+                <p className="text-sm font-semibold">{t.investmentTitle}</p>
               </div>
               <div className="p-5">
                 <div className="grid gap-3">
                   {[
                     {
-                      title: "Why Invest in Topaz",
+                      title: t.investmentHeading,
                       bullets: [],
                     },
                     {
-                      title: "Proven Profitability",
-                      bullets: ["Consistent revenue growth over multiple cycles", "Strong EBITDA margins relative to peers", "High project-level returns"],
+                      title: t.highlight1Title,
+                      bullets: [t.highlight1Desc1, t.highlight1Desc2, t.highlight1Desc3],
                     },
                     {
-                      title: "Diversified Revenue Streams",
-                      bullets: ["Residential sales", "Commercial leasing", "Property management income", "Hospitality and mixed-use exposure"],
+                      title: t.highlight2Title,
+                      bullets: [t.highlight2Point1, t.highlight2Point2, t.highlight2Point3, t.highlight2Point4],
                     },
                     {
-                      title: "Strong Project Pipeline",
-                      bullets: ["SAR 12+ billion GDV under development", "Balanced mix of pre-sold and income-generating assets"],
+                      title: t.highlight3Title,
+                      bullets: [t.highlight3Desc1, t.highlight3Desc2],
                     },
                     {
-                      title: "Experienced Management Team",
-                      bullets: ["Local market expertise", "Institutional governance mindset", "Long-term alignment with shareholders"],
+                      title: t.highlight4Title,
+                      bullets: [t.highlight4Desc1, t.highlight4Desc2, t.highlight4Desc3],
                     },
                   ].map((h) => (
                     <div key={h.title} className="rounded-2xl border border-slate-200 bg-white p-4">
@@ -757,30 +800,30 @@ export default function TopazIRSite() {
           <div className="mt-4 grid gap-4 lg:grid-cols-2">
             <Card>
               <div className="border-b border-slate-200 p-5">
-                <p className="text-sm font-semibold">3.3 Saudi Arabia Macro Tailwinds</p>
+                <p className="text-sm font-semibold">{t.macroTitle}</p>
               </div>
               <div className="p-5">
-                <p className="text-xs font-semibold text-slate-700">Structural Market Drivers</p>
+                <p className="text-xs font-semibold text-slate-700">{t.macroHeading}</p>
                 <ul className="mt-2 space-y-1 text-sm text-slate-700">
                   {[
-                    "Vision 2030 Urban Development Programs",
-                    "Population Growth & Urbanization",
-                    "Housing Supply Gap in Key Cities",
-                    "Mortgage Market Expansion",
-                    "Foreign Ownership Liberalization",
-                    "Government-Backed Financing Programs",
+                    t.macro1,
+                    t.macro2,
+                    t.macro3,
+                    t.macro4,
+                    t.macro5,
+                    t.macro6,
                   ].map((x) => (
                     <li key={x}>• {x}</li>
                   ))}
                 </ul>
 
                 <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                  <p className="text-xs font-semibold text-slate-700">Illustrative Market Context</p>
+                  <p className="text-xs font-semibold text-slate-700">{t.marketContext}</p>
                   <ul className="mt-2 space-y-1 text-sm text-slate-700">
                     {[
-                      "Saudi real estate market projected CAGR: 6–8%",
-                      "Homeownership targets increasing nationally",
-                      "Government-led infrastructure spend supporting asset values",
+                      t.marketPoint1,
+                      t.marketPoint2,
+                      t.marketPoint3,
                     ].map((x) => (
                       <li key={x}>• {x}</li>
                     ))}
@@ -791,30 +834,30 @@ export default function TopazIRSite() {
 
             <Card>
               <div className="border-b border-slate-200 p-5">
-                <p className="text-sm font-semibold">3.4 IPO Readiness & Forward Roadmap</p>
+                <p className="text-sm font-semibold">{t.ipoTitle}</p>
               </div>
               <div className="p-5 grid gap-5 sm:grid-cols-2">
                 <div>
-                  <p className="text-xs font-semibold text-slate-700">Capital Markets Preparation</p>
+                  <p className="text-xs font-semibold text-slate-700">{t.ipoPrep}</p>
                   <ul className="mt-2 space-y-1 text-sm text-slate-700">
                     {[
-                      "IFRS-compliant financial reporting",
-                      "Independent board committees",
-                      "ESG framework under development",
-                      "Scalable ERP and reporting systems",
+                      t.ipoPrep1,
+                      t.ipoPrep2,
+                      t.ipoPrep3,
+                      t.ipoPrep4,
                     ].map((x) => (
                       <li key={x}>• {x}</li>
                     ))}
                   </ul>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-slate-700">3–5 Year Strategic Priorities</p>
+                  <p className="text-xs font-semibold text-slate-700">{t.strategicPriorities}</p>
                   <ul className="mt-2 space-y-1 text-sm text-slate-700">
                     {[
-                      "Grow recurring revenue to 45–50% of total revenue",
-                      "Expand into two additional Tier-1 cities",
-                      "Optimize capital structure ahead of listing",
-                      "Selective asset recycling to enhance ROIC",
+                      t.priority1,
+                      t.priority2,
+                      t.priority3,
+                      t.priority4,
                     ].map((x) => (
                       <li key={x}>• {x}</li>
                     ))}
@@ -825,7 +868,7 @@ export default function TopazIRSite() {
           </div>
 
           <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-xs leading-relaxed text-slate-600">
-            For an investor relations audience, both sections should be data-forward, not marketing-heavy; use consistent KPI definitions; allow downloadable fact sheets and presentations; and clearly separate historical facts from forward-looking statements.
+            {t.disclaimer}
           </div>
         </Container>
       </section>
@@ -833,16 +876,16 @@ export default function TopazIRSite() {
       {/* Press */}
       <section id="press" className="border-t border-slate-200 py-14 sm:py-16">
         <Container>
-          <SectionTitle title="Press releases" subtitle="Latest company updates (placeholders)." />
+          <SectionTitle title={t.pressReleases} subtitle={t.pressDesc} />
           <div className="mt-8 grid gap-4 lg:grid-cols-3">
             {pressReleases.map((pr) => (
               <a key={pr.id} href={pr.href} className="block rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:bg-slate-50">
                 <div className="flex items-start justify-between gap-4">
                   <p className="text-sm font-semibold text-slate-900">{pr.title}</p>
-                  <Pill>{formatISODate(pr.date)}</Pill>
+                  <Pill>{formatISODate(pr.date, language)}</Pill>
                 </div>
                 <p className="mt-2 text-sm leading-relaxed text-slate-600">{pr.summary}</p>
-                <p className="mt-4 text-xs font-semibold text-slate-900">Read more</p>
+                <p className="mt-4 text-xs font-semibold text-slate-900">{t.readMore}</p>
               </a>
             ))}
           </div>
@@ -855,9 +898,9 @@ export default function TopazIRSite() {
               </div>
               <div className="p-5 grid gap-3 sm:grid-cols-3">
                 {[
-                  { title: "Fact sheet (PDF)", meta: "Key KPIs and portfolio snapshot", href: "#" },
-                  { title: "Investor presentation", meta: "Quarterly deck", href: "#" },
-                  { title: "Financial statements", meta: "IFRS reporting", href: "#" },
+                  { title: t.factSheet, meta: t.factSheetDesc, href: "#" },
+                  { title: t.presentation, meta: t.presentationDesc, href: "#" },
+                  { title: t.financials, meta: t.financialsDesc, href: "#" },
                 ].map((d) => (
                   <a key={d.title} href={d.href} className="rounded-2xl border border-slate-200 bg-white p-4 hover:bg-slate-50">
                     <p className="text-sm font-semibold text-slate-900">{d.title}</p>
@@ -874,8 +917,8 @@ export default function TopazIRSite() {
       <section id="careers" className="border-t border-slate-200 py-14 sm:py-16">
         <Container>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <SectionTitle title="Vacant jobs" subtitle="Short list of open roles. Link to the main jobs page for the full list." />
-            <SecondaryButton href="#">View all jobs</SecondaryButton>
+            <SectionTitle title={t.careers} subtitle={t.careersDesc} />
+            <SecondaryButton href="#">{t.viewAll}</SecondaryButton>
           </div>
 
           <div className="mt-8 grid gap-4 lg:grid-cols-3">
@@ -886,7 +929,7 @@ export default function TopazIRSite() {
                   <Pill>{j.location}</Pill>
                   <Pill>{j.type}</Pill>
                 </div>
-                <p className="mt-4 text-xs font-semibold text-slate-900">Apply</p>
+                <p className="mt-4 text-xs font-semibold text-slate-900">{t.apply}</p>
               </a>
             ))}
           </div>
@@ -896,14 +939,14 @@ export default function TopazIRSite() {
       {/* Events */}
       <section id="events" className="border-t border-slate-200 py-14 sm:py-16">
         <Container>
-          <SectionTitle title="Upcoming events" subtitle="Calendar view and a quick list for investor and company events." />
+          <SectionTitle title={t.events} subtitle={t.eventsDesc} />
           <div className="mt-8 grid gap-4 lg:grid-cols-3">
             <div className="lg:col-span-2">
-              <CalendarWidget items={events} />
+              <CalendarWidget items={events} t={t} />
             </div>
             <Card>
               <div className="border-b border-slate-200 p-5">
-                <p className="text-sm font-semibold">Event list</p>
+                <p className="text-sm font-semibold">{t.eventList}</p>
               </div>
               <div className="p-5 space-y-3">
                 {events.slice().sort((a, b) => a.date.localeCompare(b.date)).map((e) => (
@@ -913,7 +956,7 @@ export default function TopazIRSite() {
                         <p className="text-sm font-semibold">{e.title}</p>
                         <p className="mt-1 text-xs text-slate-600">{e.location}</p>
                       </div>
-                      <Pill>{formatISODate(e.date)}</Pill>
+                      <Pill>{formatISODate(e.date, language)}</Pill>
                     </div>
                   </a>
                 ))}
@@ -928,55 +971,55 @@ export default function TopazIRSite() {
         <Container>
           <div className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4" id="contact">
             <div className="space-y-3">
-              <p className="text-sm font-semibold">Who we are</p>
+              <p className="text-sm font-semibold">{t.whoWeAre}</p>
               <p className="text-sm leading-relaxed text-slate-600">
-                Topaz is a real estate platform focused on disciplined delivery, operational efficiency, and long-term value creation.
+                {t.companyDesc}
               </p>
               <div className="flex flex-wrap gap-2">
-                <Pill>Data-forward</Pill>
-                <Pill>Institutional tone</Pill>
-                <Pill>Capital readiness</Pill>
+                <Pill>{t.dataForward}</Pill>
+                <Pill>{t.institutionalTone}</Pill>
+                <Pill>{t.capitalReadiness}</Pill>
               </div>
             </div>
 
             <div className="space-y-3">
-              <p className="text-sm font-semibold">Contact us</p>
-              <p className="text-sm text-slate-600">Investor Relations</p>
+              <p className="text-sm font-semibold">{t.contact}</p>
+              <p className="text-sm text-slate-600">{t.investorRelations}</p>
               <div className="space-y-1 text-sm text-slate-700">
-                <p>Email: ir@topaz.example</p>
-                <p>Phone: +966 00 000 0000</p>
+                <p>{t.email}</p>
+                <p>{t.phone}</p>
               </div>
               <div className="pt-2">
-                <SecondaryButton href="#">Send a message</SecondaryButton>
+                <SecondaryButton href="#">{t.sendMessage}</SecondaryButton>
               </div>
             </div>
 
             <div className="space-y-3">
-              <p className="text-sm font-semibold">Our offices</p>
+              <p className="text-sm font-semibold">{t.ourOffices}</p>
               <ul className="space-y-2 text-sm text-slate-700">
                 <li>
-                  <p className="font-semibold text-slate-900">Riyadh</p>
-                  <p className="text-slate-600">Business District (placeholder address)</p>
+                  <p className="font-semibold text-slate-900">{t.riyadh}</p>
+                  <p className="text-slate-600">{t.riyadhAddress}</p>
                 </li>
                 <li>
-                  <p className="font-semibold text-slate-900">Jeddah</p>
-                  <p className="text-slate-600">Waterfront (placeholder address)</p>
+                  <p className="font-semibold text-slate-900">{t.jeddah}</p>
+                  <p className="text-slate-600">{t.jeddahAddress}</p>
                 </li>
                 <li>
-                  <p className="font-semibold text-slate-900">Eastern Province</p>
-                  <p className="text-slate-600">Commercial hub (placeholder address)</p>
+                  <p className="font-semibold text-slate-900">{t.easternProvince}</p>
+                  <p className="text-slate-600">{t.easternAddress}</p>
                 </li>
               </ul>
             </div>
 
             <div className="space-y-3">
-              <p className="text-sm font-semibold">Quick links</p>
+              <p className="text-sm font-semibold">{t.quickLinks}</p>
               <ul className="space-y-2 text-sm text-slate-700">
-                <li><a className="hover:text-slate-900" href="#heritage">Heritage & Performance</a></li>
-                <li><a className="hover:text-slate-900" href="#future">Future & Investment Case</a></li>
-                <li><a className="hover:text-slate-900" href="#press">Press releases</a></li>
-                <li><a className="hover:text-slate-900" href="#careers">Careers</a></li>
-                <li><a className="hover:text-slate-900" href="#events">Events</a></li>
+                <li><a className="hover:text-slate-900" href="#heritage">{t.section1Title}</a></li>
+                <li><a className="hover:text-slate-900" href="#future">{t.section3Title}</a></li>
+                <li><a className="hover:text-slate-900" href="#press">{t.pressReleases}</a></li>
+                <li><a className="hover:text-slate-900" href="#careers">{t.careers}</a></li>
+                <li><a className="hover:text-slate-900" href="#events">{t.events}</a></li>
               </ul>
             </div>
           </div>
@@ -985,12 +1028,12 @@ export default function TopazIRSite() {
         <div className="border-t border-slate-200 bg-white">
           <Container>
             <div className="flex flex-col gap-3 py-6 text-xs text-slate-600 sm:flex-row sm:items-center sm:justify-between">
-              <p>© {new Date().getFullYear()} Topaz. All rights reserved.</p>
+              <p>{t.copyright}</p>
               <div className="flex flex-wrap gap-4">
-                <a className="hover:text-slate-900" href="#">Disclaimers</a>
-                <a className="hover:text-slate-900" href="#">Privacy policy</a>
-                <a className="hover:text-slate-900" href="#">Terms</a>
-                <a className="hover:text-slate-900" href="#">Forward-looking statements</a>
+                <a className="hover:text-slate-900" href="#">{t.disclaimers}</a>
+                <a className="hover:text-slate-900" href="#">{t.privacyPolicy}</a>
+                <a className="hover:text-slate-900" href="#">{t.terms}</a>
+                <a className="hover:text-slate-900" href="#">{t.forwardStatements}</a>
               </div>
             </div>
           </Container>

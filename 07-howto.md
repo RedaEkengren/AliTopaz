@@ -235,3 +235,37 @@ For technical issues:
 4. Test changes in development before production deployment
 
 Remember: All changes must follow the golden rules defined in `01-goldenrules.md` - use scripts for all state-changing operations.
+
+## Design System Guidelines (Dec 14, 2025)
+
+### Typography Standards
+When updating content, use only these font-weights:
+- **Regular text**: Default weight for body text
+- **Emphasis**: `font-semibold` (600) for labels, eyebrows  
+- **Headlines**: `font-bold` (700) for titles, important numbers
+
+### Color System
+- **Text Colors**: Use CSS variables `--gray-light`, `--gray-medium`, `--gray-dark`
+- **Brand Accent**: `--topaz-accent` for primary branding
+- **Gold Highlights**: `--topaz-gold` for important KPIs and milestones
+- **Avoid**: Multiple slate- variations (use the 3 defined grays only)
+
+### Spacing System
+- **Small gaps**: `mt-4` (16px) 
+- **Medium gaps**: `mt-6` (24px)
+- **Large gaps**: `mt-8` (32px) for sections
+- **Avoid**: Random spacing like `mt-2`, `mt-3`, `mt-5`
+
+### Button Hierarchy
+- **Primary Buttons**: ONLY for Downloads and Contact IR
+- **Secondary Buttons**: All other navigation and actions
+- **Never**: Use Primary for internal navigation
+
+### Image Requirements
+All images must be:
+- **Format**: WebP for optimization
+- **Quality**: 85% compression via `cwebp -q 85`
+- **Naming**: Descriptive names like `hero-property.webp`
+- **Sizing**: Consistent heights in hero sections (h-32)
+
+**Design System Updated**: December 14, 2025
