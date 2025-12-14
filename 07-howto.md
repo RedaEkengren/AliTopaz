@@ -268,4 +268,47 @@ All images must be:
 - **Naming**: Descriptive names like `hero-property.webp`
 - **Sizing**: Consistent heights in hero sections (h-32)
 
+## Mobile Financial Tables (Dec 14, 2025 - Final Implementation)
+
+### Responsive Table Strategy
+Financial data tables now use responsive design approach:
+
+**Desktop Approach:**
+```css
+.hidden sm:block          /* Show tables on desktop */
+.overflow-x-auto          /* Allow horizontal scroll if needed */
+```
+
+**Mobile Approach:**
+```css
+.sm:hidden               /* Hide tables on mobile */
+.space-y-4               /* Card spacing */
+.grid-cols-3             /* FY year columns */
+```
+
+### Implementation Pattern
+```typescript
+{/* Desktop table view */}
+<div className="hidden sm:block overflow-x-auto">
+  <table>...</table>
+</div>
+
+{/* Mobile card view */}
+<div className="sm:hidden p-5 space-y-4">
+  {data.map((item) => (
+    <div className="rounded-xl border p-4">
+      {/* Card content with grid layout */}
+    </div>
+  ))}
+</div>
+```
+
+### Mobile Table Guidelines
+- **Never**: Use horizontal scrolling tables on mobile
+- **Always**: Provide mobile card alternatives
+- **Design**: Maintain visual hierarchy with gold accents
+- **Testing**: Verify readability on 320px+ widths
+
+**Mobile Tables Updated**: December 14, 2025
+
 **Design System Updated**: December 14, 2025
